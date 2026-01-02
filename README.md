@@ -1,55 +1,70 @@
-# Mental Stress Assessment and Recommendation System
+# Mental Stress Assessment System
 
-A machine learning-powered web application that predicts stress levels and provides personalized coping mechanism recommendations.
+AI-powered web application for predicting student mental stress levels and providing personalized coping mechanism recommendations.
+
+![Python](https://img.shields.io/badge/Python-3.11-blue)
+![Flask](https://img.shields.io/badge/Flask-3.0-green)
+![License](https://img.shields.io/badge/License-MIT-yellow)
+
+## Live Demo
+
+🔗 **[Try it live on Render](https://mental-stress-assessment-ut.onrender.com/login)**
 
 ## Features
 
-- Stress level prediction (Low/Medium/High)
-- Probability distribution across stress categories
-- Personalized coping mechanism recommendations based on k-NN similarity
-- User-friendly web interface
-- REST API endpoints
+- **User Authentication** - Secure registration and login system
+- **Multi-Profile Management** - Create and manage multiple user profiles
+- **AI Predictions** - Random Forest classifier for stress level prediction
+- **Personalized Recommendations** - k-NN based coping mechanism suggestions
+- **Assessment History** - Track stress levels over time
+- **Beautiful UI** - Modern, responsive interface
 
-## Project Structure
+## Tech Stack
 
-```
-stress_app/
-├── app.py                      # Flask application
-├── templates/
-│   └── index.html             # Web interface
-├── models/                     # ML models and artifacts
-│   ├── rf_model.joblib        # Random Forest classifier
-│   ├── knn_model.joblib       # k-NN recommendation model
-│   ├── scaler.joblib          # Feature scaler
-│   ├── imputer.joblib         # Missing value imputer
-│   ├── feature_columns.json   # Feature list
-│   ├── rec_feature_columns.json
-│   └── label_map.json         # Label encoding map
-├── data/
-│   └── train_recs.csv         # Training data for recommendations
-├── requirements.txt           # Python dependencies
-└── README.md                  # This file
-```
+**Backend:**
+- Flask 3.0 (Python web framework)
+- SQLAlchemy (ORM)
+- Flask-Login (Authentication)
+- PostgreSQL (Production database)
+
+**Machine Learning:**
+- scikit-learn 1.8.0 (Random Forest, k-NN)
+- pandas, numpy (Data processing)
+- joblib (Model persistence)
+
+**Frontend:**
+- HTML5, CSS3, JavaScript
+- Responsive design
+
+## ML Models
+
+### Classification
+- **Algorithm:** Random Forest
+- **Features:** 20 features including demographics, academic performance, lifestyle factors
+- **Output:** Stress level (Low/Medium/High) with probability distribution
+
+### Recommendations
+- **Algorithm:** k-Nearest Neighbors (k=50)
+- **Output:** Top 5 personalized coping mechanisms based on similar users
 
 ## Local Setup
 
 ### Prerequisites
-
-- Python 3.8 or higher
+- Python 3.11+
 - pip
 
 ### Installation
 
 1. Clone the repository
 ```bash
-git clone <your-repo-url>
-cd stress_app
+git clone https://github.com/utkarsh9630/mental-stress-assessment.git
+cd mental-stress-assessment
 ```
 
-2. Create a virtual environment
+2. Create virtual environment
 ```bash
 python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
+source venv/bin/activate  # Windows: venv\Scripts\activate
 ```
 
 3. Install dependencies
@@ -57,143 +72,71 @@ source venv/bin/activate  # On Windows: venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
-4. Run the application
+4. Set environment variables
+```bash
+cp .env.example .env
+# Edit .env with your settings
+```
+
+5. Run the application
 ```bash
 python app.py
 ```
 
-5. Open browser and navigate to `http://localhost:5000`
+6. Open browser to `http://localhost:5000`
+
+## Project Structure
+```
+mental-stress-assessment/
+├── app.py                 # Main Flask application
+├── models.py              # Database models
+├── forms.py               # WTForms
+├── templates/             # HTML templates
+│   ├── base.html
+│   ├── auth/
+│   ├── dashboard/
+│   └── assess.html
+├── models/                # ML models
+│   ├── rf_model.joblib
+│   ├── knn_model.joblib
+│   └── *.json
+├── data/
+│   └── train_recs.csv
+├── requirements.txt
+├── Procfile
+└── README.md
+```
 
 ## Deployment
 
-### Deploy to Render
+Deployed on Render with PostgreSQL database.
 
-1. Create a new account at [render.com](https://render.com)
+### Deploy Your Own
 
-2. Create a new Web Service
+[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy)
 
-3. Connect your GitHub repository
+## Screenshots
 
-4. Configure the service:
-   - Environment: Python 3
-   - Build Command: `pip install -r requirements.txt`
-   - Start Command: `gunicorn app:app`
+[Add screenshots of your application here]
 
-5. Add environment variables (if needed)
+## Future Enhancements
 
-6. Deploy
+- [ ] Email notifications for high stress levels
+- [ ] Export assessment history as PDF
+- [ ] Mobile app version
+- [ ] Integration with wearable devices
+- [ ] Multi-language support
 
-### Deploy to Heroku
+## Contributing
 
-1. Install Heroku CLI
-
-2. Login to Heroku
-```bash
-heroku login
-```
-
-3. Create a Procfile in the root directory:
-```
-web: gunicorn app:app
-```
-
-4. Create a new Heroku app
-```bash
-heroku create your-app-name
-```
-
-5. Push to Heroku
-```bash
-git push heroku main
-```
-
-6. Open the app
-```bash
-heroku open
-```
-
-### Deploy to Railway
-
-1. Create account at [railway.app](https://railway.app)
-
-2. Create new project from GitHub repo
-
-3. Railway will auto-detect the Python app
-
-4. Set start command: `gunicorn app:app`
-
-5. Deploy
-
-## API Usage
-
-### Predict Endpoint
-
-**POST /predict**
-
-Request body:
-```json
-{
-  "age": 22,
-  "gpa": 3.5,
-  "study_hours": 25,
-  "social_media": 3,
-  "sleep": 7,
-  "exercise": 5,
-  "family_support": 4,
-  "financial_stress": 2,
-  "peer_pressure": 3,
-  "relationship_stress": 2,
-  "counseling": "No",
-  "diet_quality": 4,
-  "cognitive_distortions": 2,
-  "family_mental_history": "No",
-  "medical_condition": "No",
-  "substance_use": 1,
-  "gender": "Female",
-  "current_mechanisms": ["Exercise", "Reading"]
-}
-```
-
-Response:
-```json
-{
-  "prediction": "Low",
-  "probabilities": {
-    "Low": 0.65,
-    "Medium": 0.25,
-    "High": 0.10
-  },
-  "drop_probability": 0.0,
-  "recommendations": [
-    {
-      "mechanism": "Meditation",
-      "success_rate": 0.78
-    },
-    {
-      "mechanism": "Yoga",
-      "success_rate": 0.72
-    }
-  ]
-}
-```
-
-## Model Information
-
-### Classification Model
-- Algorithm: Random Forest Classifier
-- Features: 20 features including demographics, academic, lifestyle, and health factors
-- Target: Stress Level (Low/Medium/High)
-- Accuracy: ~65% on test set
-
-### Recommendation Model
-- Algorithm: k-Nearest Neighbors (k=50)
-- Returns top 5 coping mechanisms based on success rate in similar individuals
-- Success defined as achieving "Low" stress level
+Contributions are welcome! Please feel free to submit a Pull Request.
 
 ## License
 
-MIT License
+MIT License - see LICENSE file for details
 
 ## Contact
 
-For questions or issues, please open an issue on GitHub.
+Your Name - Utkarsh Tripathi(mailto:tripathiutkarsh46@gmail.com)
+
+Project Link: [https://github.com/utkarsh9630/mental-stress-assessment]

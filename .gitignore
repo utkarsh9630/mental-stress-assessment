@@ -53,3 +53,6 @@ htmlcov/
 # Data (keep models and necessary data)
 *.csv
 !train_recs.csv
+
+# Secret Key File
+secret_key.txt
