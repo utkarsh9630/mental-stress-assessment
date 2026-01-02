@@ -10,8 +10,17 @@ from models import db, User, Profile, Assessment
 from forms import RegistrationForm, LoginForm, ProfileForm
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = 'your-secret-key-change-this-in-production'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///stress_assessment.db'
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+
+app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'dev-secret-key')
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', 'sqlite:///stress_assessment.db')
+
+# Handle postgres:// to postgresql:// conversion for Render
+if app.config['SQLALCHEMY_DATABASE_URI'].startswith('postgres://'):
+    app.config['SQLALCHEMY_DATABASE_URI'] = app.config['SQLALCHEMY_DATABASE_URI'].replace('postgres://', 'postgresql://', 1)
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 @app.template_filter('from_json')
@@ -277,6 +286,22 @@ def get_recommendations(input_dict, pred_int, probs, current_mechanisms, k=50, m
 @app.route('/health')
 def health():
     return jsonify({'status': 'healthy'})
+    
+@app.route('/init-db')
+def init_database():
+    """Initialize database tables - remove this endpoint after first use"""
+    try:
+        db.create_all()
+        return jsonify({
+            'status': 'success',
+            'message': 'Database tables created successfully!',
+            'tables': ['stress_users', 'stress_profiles', 'stress_assessments']
+        })
+    except Exception as e:
+        return jsonify({
+            'status': 'error',
+            'message': str(e)
+        }), 500
 
 if __name__ == '__main__':
     with app.app_context():
