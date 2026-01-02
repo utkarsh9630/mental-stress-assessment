@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Mental Stress Assessment{% endblock %}</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
+        .navbar {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 15px 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .navbar-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .navbar-brand {
+            font-size: 24px;
+            font-weight: bold;
+            color: #667eea;
+            text-decoration: none;
+        }
+        
+        .navbar-menu {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+        
+        .navbar-menu a {
+            color: #333;
+            text-decoration: none;
+            padding: 8px 16px;
+            border-radius: 5px;
+            transition: background 0.3s;
+        }
+        
+        .navbar-menu a:hover {
+            background: #f0f0f0;
+        }
+        
+        .btn-logout {
+            background: #dc3545;
+            color: white !important;
+        }
+        
+        .btn-logout:hover {
+            background: #c82333 !important;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+        
+        .alert {
+            padding: 15px 20px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            background: white;
+        }
+        
+        .alert-success {
+            border-left: 4px solid #28a745;
+            color: #155724;
+        }
+        
+        .alert-danger {
+            border-left: 4px solid #dc3545;
+            color: #721c24;
+        }
+        
+        .alert-info {
+            border-left: 4px solid #17a2b8;
+            color: #0c5460;
+        }
+    </style>
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    {% if current_user.is_authenticated %}
+    <nav class="navbar">
+        <div class="navbar-content">
+            <a href="{{ url_for('dashboard') }}" class="navbar-brand">Mental Stress Assessment</a>
+            <div class="navbar-menu">
+                <a href="{{ url_for('dashboard') }}">Dashboard</a>
+                <a href="{{ url_for('create_profile') }}">New Profile</a>
+                <span style="color: #666;">{{ current_user.username }}</span>
+                <a href="{{ url_for('logout') }}" class="btn-logout">Logout</a>
+            </div>
+        </div>
+    </nav>
+    {% endif %}
+    
+    <div class="container">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+        
+        {% block content %}{% endblock %}
+    </div>
+    
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

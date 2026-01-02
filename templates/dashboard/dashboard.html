@@ -1,0 +1,163 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block extra_css %}
+<style>
+    .dashboard-header {
+        background: white;
+        padding: 30px;
+        border-radius: 15px;
+        margin-bottom: 30px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+    
+    .dashboard-header h1 {
+        color: #333;
+        margin-bottom: 10px;
+    }
+    
+    .dashboard-header p {
+        color: #666;
+    }
+    
+    .profiles-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 20px;
+    }
+    
+    .profile-card {
+        background: white;
+        padding: 25px;
+        border-radius: 12px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        transition: transform 0.3s;
+    }
+    
+    .profile-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+    }
+    
+    .profile-name {
+        font-size: 20px;
+        font-weight: bold;
+        color: #333;
+        margin-bottom: 10px;
+    }
+    
+    .profile-info {
+        color: #666;
+        margin-bottom: 15px;
+    }
+    
+    .profile-actions {
+        display: flex;
+        gap: 10px;
+        margin-top: 15px;
+    }
+    
+    .btn {
+        padding: 10px 20px;
+        border: none;
+        border-radius: 6px;
+        font-weight: 600;
+        cursor: pointer;
+        text-decoration: none;
+        display: inline-block;
+        text-align: center;
+        transition: all 0.3s;
+    }
+    
+    .btn-primary {
+        background: #667eea;
+        color: white;
+    }
+    
+    .btn-primary:hover {
+        background: #5568d3;
+    }
+    
+    .btn-secondary {
+        background: #6c757d;
+        color: white;
+    }
+    
+    .btn-secondary:hover {
+        background: #5a6268;
+    }
+    
+    .btn-danger {
+        background: #dc3545;
+        color: white;
+    }
+    
+    .btn-danger:hover {
+        background: #c82333;
+    }
+    
+    .btn-create {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 15px 30px;
+        font-size: 16px;
+        margin-bottom: 30px;
+    }
+    
+    .empty-state {
+        background: white;
+        padding: 60px 40px;
+        border-radius: 15px;
+        text-align: center;
+    }
+    
+    .empty-state h3 {
+        color: #333;
+        margin-bottom: 15px;
+    }
+    
+    .empty-state p {
+        color: #666;
+        margin-bottom: 25px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="dashboard-header">
+    <h1>Welcome, {{ current_user.username }}!</h1>
+    <p>Manage your profiles and track mental stress assessments</p>
+</div>
+
+<a href="{{ url_for('create_profile') }}" class="btn btn-create">Create New Profile</a>
+
+{% if profiles %}
+    <div class="profiles-grid">
+        {% for profile in profiles %}
+        <div class="profile-card">
+            <div class="profile-name">{{ profile.profile_name }}</div>
+            <div class="profile-info">
+                Age: {{ profile.age }} | Gender: {{ profile.gender }}
+            </div>
+            <div class="profile-info">
+                Assessments: {{ profile.assessments|length }}
+            </div>
+            <div class="profile-actions">
+                <a href="{{ url_for('view_profile', profile_id=profile.id) }}" class="btn btn-secondary">View</a>
+                <a href="{{ url_for('assess_profile', profile_id=profile.id) }}" class="btn btn-primary">Assess</a>
+                <form method="POST" action="{{ url_for('delete_profile', profile_id=profile.id) }}" style="display: inline;" onsubmit="return confirm('Are you sure you want to delete this profile?');">
+                    <button type="submit" class="btn btn-danger">Delete</button>
+                </form>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <div class="empty-state">
+        <h3>No Profiles Yet</h3>
+        <p>Create your first profile to start tracking mental stress assessments</p>
+        <a href="{{ url_for('create_profile') }}" class="btn btn-primary">Create Profile</a>
+    </div>
+{% endif %}
+{% endblock %}
