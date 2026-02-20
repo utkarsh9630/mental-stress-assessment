@@ -6,9 +6,6 @@ AI-powered web application for predicting student mental stress levels and provi
 ![Flask](https://img.shields.io/badge/Flask-3.0-green)
 ![License](https://img.shields.io/badge/License-MIT-yellow)
 
-## Live Demo
-
-🔗 **[Try it live on Render](https://mental-stress-assessment-ut.onrender.com/login)**
 
 ## Features
 
