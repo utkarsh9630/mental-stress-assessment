@@ -1,0 +1,570 @@
+{% extends "base.html" %}
+
+{% block title %}Assessment - {{ profile.profile_name }}{% endblock %}
+
+{% block extra_css %}
+<style>
+    .assessment-container {
+        max-width: 900px;
+        margin: 0 auto;
+        background: white;
+        border-radius: 15px;
+        padding: 40px;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    }
+    
+    h1 {
+        color: #333;
+        text-align: center;
+        margin-bottom: 10px;
+        font-size: 32px;
+    }
+    
+    .subtitle {
+        text-align: center;
+        color: #666;
+        margin-bottom: 40px;
+        font-size: 16px;
+    }
+    
+    .form-section {
+        margin-bottom: 30px;
+    }
+    
+    .section-title {
+        color: #667eea;
+        font-size: 20px;
+        margin-bottom: 20px;
+        padding-bottom: 10px;
+        border-bottom: 2px solid #e0e0e0;
+    }
+    
+    .form-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 20px;
+    }
+    
+    .form-group {
+        display: flex;
+        flex-direction: column;
+    }
+    
+    label {
+        color: #555;
+        font-weight: 600;
+        margin-bottom: 8px;
+        font-size: 14px;
+    }
+    
+    input, select {
+        padding: 12px;
+        border: 2px solid #e0e0e0;
+        border-radius: 8px;
+        font-size: 14px;
+        transition: border-color 0.3s;
+    }
+    
+    input:focus, select:focus {
+        outline: none;
+        border-color: #667eea;
+    }
+    
+    .slider-container {
+        display: flex;
+        flex-direction: column;
+    }
+    
+    input[type="range"] {
+        width: 100%;
+        margin-top: 8px;
+    }
+    
+    .slider-value {
+        color: #667eea;
+        font-weight: bold;
+        margin-top: 5px;
+    }
+    
+    .mechanisms-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 10px;
+        margin-top: 10px;
+    }
+    
+    .mechanism-item {
+        display: flex;
+        align-items: center;
+    }
+    
+    .mechanism-item input[type="checkbox"] {
+        width: 18px;
+        height: 18px;
+        margin-right: 8px;
+    }
+    
+    .mechanism-item label {
+        margin-bottom: 0;
+        font-weight: normal;
+    }
+    
+    .btn-submit {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border: none;
+        padding: 15px 40px;
+        font-size: 18px;
+        font-weight: 600;
+        border-radius: 8px;
+        cursor: pointer;
+        display: block;
+        margin: 30px auto;
+        transition: transform 0.2s;
+    }
+    
+    .btn-submit:hover {
+        transform: translateY(-2px);
+    }
+    
+    .btn-submit:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+    }
+    
+    .results {
+        display: none;
+        margin-top: 40px;
+        padding: 30px;
+        background: #f8f9fa;
+        border-radius: 10px;
+    }
+    
+    .results.show {
+        display: block;
+    }
+    
+    .prediction-box {
+        background: white;
+        padding: 25px;
+        border-radius: 10px;
+        margin-bottom: 20px;
+        text-align: center;
+    }
+    
+    .stress-level {
+        font-size: 36px;
+        font-weight: bold;
+        margin: 15px 0;
+    }
+    
+    .stress-low { color: #28a745; }
+    .stress-medium { color: #ffc107; }
+    .stress-high { color: #dc3545; }
+    
+    .probability-bars {
+        margin: 20px 0;
+    }
+    
+    .prob-bar {
+        margin: 10px 0;
+    }
+    
+    .prob-label {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 5px;
+        font-weight: 600;
+    }
+    
+    .bar-container {
+        background: #e0e0e0;
+        border-radius: 10px;
+        height: 25px;
+        overflow: hidden;
+    }
+    
+    .bar-fill {
+        height: 100%;
+        border-radius: 10px;
+        transition: width 0.5s ease;
+    }
+    
+    .bar-low { background: #28a745; }
+    .bar-medium { background: #ffc107; }
+    .bar-high { background: #dc3545; }
+    
+    .recommendations-box {
+        background: white;
+        padding: 25px;
+        border-radius: 10px;
+    }
+    
+    .recommendations-box h3 {
+        color: #667eea;
+        margin-bottom: 20px;
+    }
+    
+    .rec-item {
+        background: #f8f9fa;
+        padding: 15px;
+        margin: 10px 0;
+        border-radius: 8px;
+        border-left: 4px solid #667eea;
+    }
+    
+    .rec-name {
+        font-weight: 600;
+        color: #333;
+        font-size: 16px;
+    }
+    
+    .rec-success {
+        color: #28a745;
+        font-size: 14px;
+        margin-top: 5px;
+    }
+    
+    .loading {
+        text-align: center;
+        color: #667eea;
+        font-size: 18px;
+        display: none;
+    }
+    
+    .loading.show {
+        display: block;
+    }
+    
+    .error {
+        background: #f8d7da;
+        color: #721c24;
+        padding: 15px;
+        border-radius: 8px;
+        margin: 20px 0;
+        display: none;
+    }
+    
+    .error.show {
+        display: block;
+    }
+    
+    .btn-back {
+        display: inline-block;
+        margin-bottom: 20px;
+        color: #667eea;
+        text-decoration: none;
+        font-weight: 600;
+    }
+    
+    .btn-back:hover {
+        text-decoration: underline;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<a href="{{ url_for('view_profile', profile_id=profile.id) }}" class="btn-back">← Back to Profile</a>
+
+<div class="assessment-container">
+    <h1>Mental Stress Assessment</h1>
+    <p class="subtitle">Assessing: {{ profile.profile_name }}</p>
+    
+    <form id="stressForm">
+        <input type="hidden" id="profile_id" value="{{ profile.id }}">
+        <input type="hidden" id="profile_age" value="{{ profile.age }}">
+        <input type="hidden" id="profile_gender" value="{{ profile.gender }}">
+        
+        <div class="form-section">
+            <h2 class="section-title">Academic & Lifestyle</h2>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="gpa">Academic Performance (GPA 0-5)</label>
+                    <input type="number" id="gpa" name="gpa" min="0" max="5" step="0.1" required>
+                </div>
+                <div class="form-group">
+                    <label for="study_hours">Study Hours Per Week</label>
+                    <input type="number" id="study_hours" name="study_hours" min="0" max="100" required>
+                </div>
+                <div class="form-group">
+                    <label for="social_media">Social Media Usage (Hours per day)</label>
+                    <input type="number" id="social_media" name="social_media" min="0" max="24" step="0.5" required>
+                </div>
+                <div class="form-group">
+                    <label for="sleep">Sleep Duration (Hours per night)</label>
+                    <input type="number" id="sleep" name="sleep" min="0" max="24" step="0.5" required>
+                </div>
+                <div class="form-group">
+                    <label for="exercise">Physical Exercise (Hours per week)</label>
+                    <input type="number" id="exercise" name="exercise" min="0" max="100" step="0.5" required>
+                </div>
+            </div>
+        </div>
+        
+        <div class="form-section">
+            <h2 class="section-title">Stress Factors & Support (1-5 scale)</h2>
+            <div class="form-grid">
+                <div class="form-group slider-container">
+                    <label for="family_support">Family Support: <span class="slider-value" id="family_support_val">3</span></label>
+                    <input type="range" id="family_support" name="family_support" min="1" max="5" value="3" oninput="updateSlider('family_support')">
+                </div>
+                <div class="form-group slider-container">
+                    <label for="financial_stress">Financial Stress: <span class="slider-value" id="financial_stress_val">3</span></label>
+                    <input type="range" id="financial_stress" name="financial_stress" min="1" max="5" value="3" oninput="updateSlider('financial_stress')">
+                </div>
+                <div class="form-group slider-container">
+                    <label for="peer_pressure">Peer Pressure: <span class="slider-value" id="peer_pressure_val">3</span></label>
+                    <input type="range" id="peer_pressure" name="peer_pressure" min="1" max="5" value="3" oninput="updateSlider('peer_pressure')">
+                </div>
+                <div class="form-group slider-container">
+                    <label for="relationship_stress">Relationship Stress: <span class="slider-value" id="relationship_stress_val">3</span></label>
+                    <input type="range" id="relationship_stress" name="relationship_stress" min="1" max="5" value="3" oninput="updateSlider('relationship_stress')">
+                </div>
+                <div class="form-group slider-container">
+                    <label for="diet_quality">Diet Quality: <span class="slider-value" id="diet_quality_val">3</span></label>
+                    <input type="range" id="diet_quality" name="diet_quality" min="1" max="5" value="3" oninput="updateSlider('diet_quality')">
+                </div>
+                <div class="form-group slider-container">
+                    <label for="cognitive_distortions">Cognitive Distortions: <span class="slider-value" id="cognitive_distortions_val">3</span></label>
+                    <input type="range" id="cognitive_distortions" name="cognitive_distortions" min="1" max="5" value="3" oninput="updateSlider('cognitive_distortions')">
+                </div>
+                <div class="form-group slider-container">
+                    <label for="substance_use">Substance Use: <span class="slider-value" id="substance_use_val">0</span></label>
+                    <input type="range" id="substance_use" name="substance_use" min="0" max="5" value="0" oninput="updateSlider('substance_use')">
+                </div>
+            </div>
+        </div>
+        
+        <div class="form-section">
+            <h2 class="section-title">Health Information</h2>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="counseling">Counseling Attendance</label>
+                    <select id="counseling" name="counseling" required>
+                        <option value="">Select</option>
+                        <option value="Yes">Yes</option>
+                        <option value="No">No</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="family_mental_history">Family Mental Health History</label>
+                    <select id="family_mental_history" name="family_mental_history" required>
+                        <option value="">Select</option>
+                        <option value="Yes">Yes</option>
+                        <option value="No">No</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="medical_condition">Medical Condition</label>
+                    <select id="medical_condition" name="medical_condition" required>
+                        <option value="">Select</option>
+                        <option value="Yes">Yes</option>
+                        <option value="No">No</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        
+        <div class="form-section">
+            <h2 class="section-title">Current Coping Mechanisms (Select all that apply)</h2>
+            <div class="mechanisms-grid">
+                <div class="mechanism-item">
+                    <input type="checkbox" id="mech_meditation" value="Meditation">
+                    <label for="mech_meditation">Meditation</label>
+                </div>
+                <div class="mechanism-item">
+                    <input type="checkbox" id="mech_exercise" value="Exercise">
+                    <label for="mech_exercise">Exercise</label>
+                </div>
+                <div class="mechanism-item">
+                    <input type="checkbox" id="mech_yoga" value="Yoga">
+                    <label for="mech_yoga">Yoga</label>
+                </div>
+                <div class="mechanism-item">
+                    <input type="checkbox" id="mech_reading" value="Reading">
+                    <label for="mech_reading">Reading</label>
+                </div>
+                <div class="mechanism-item">
+                    <input type="checkbox" id="mech_social" value="Social Media Engagement">
+                    <label for="mech_social">Social Media Engagement</label>
+                </div>
+                <div class="mechanism-item">
+                    <input type="checkbox" id="mech_friends" value="Talking to Friends">
+                    <label for="mech_friends">Talking to Friends</label>
+                </div>
+                <div class="mechanism-item">
+                    <input type="checkbox" id="mech_walking" value="Walking or Nature Walks">
+                    <label for="mech_walking">Walking or Nature Walks</label>
+                </div>
+                <div class="mechanism-item">
+                    <input type="checkbox" id="mech_sports" value="Watching Sports">
+                    <label for="mech_sports">Watching Sports</label>
+                </div>
+                <div class="mechanism-item">
+                    <input type="checkbox" id="mech_travel" value="Travelling">
+                    <label for="mech_travel">Travelling</label>
+                </div>
+                <div class="mechanism-item">
+                    <input type="checkbox" id="mech_alone" value="Spending Time Alone">
+                    <label for="mech_alone">Spending Time Alone</label>
+                </div>
+            </div>
+        </div>
+        
+        <button type="submit" class="btn-submit">Analyze Stress Level</button>
+    </form>
+    
+    <div class="loading">
+        <p>Analyzing your data...</p>
+    </div>
+    
+    <div class="error" id="errorMessage"></div>
+    
+    <div class="results" id="results">
+        <div class="prediction-box">
+            <h2>Your Predicted Stress Level</h2>
+            <div class="stress-level" id="stressLevel"></div>
+            
+            <div class="probability-bars">
+                <div class="prob-bar">
+                    <div class="prob-label">
+                        <span>Low Stress</span>
+                        <span id="probLow">0%</span>
+                    </div>
+                    <div class="bar-container">
+                        <div class="bar-fill bar-low" id="barLow"></div>
+                    </div>
+                </div>
+                <div class="prob-bar">
+                    <div class="prob-label">
+                        <span>Medium Stress</span>
+                        <span id="probMed">0%</span>
+                    </div>
+                    <div class="bar-container">
+                        <div class="bar-fill bar-medium" id="barMed"></div>
+                    </div>
+                </div>
+                <div class="prob-bar">
+                    <div class="prob-label">
+                        <span>High Stress</span>
+                        <span id="probHigh">0%</span>
+                    </div>
+                    <div class="bar-container">
+                        <div class="bar-fill bar-high" id="barHigh"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="recommendations-box">
+            <h3>Recommended Coping Mechanisms</h3>
+            <div id="recommendationsList"></div>
+        </div>
+        
+        <div style="text-align: center; margin-top: 30px;">
+            <a href="{{ url_for('view_profile', profile_id=profile.id) }}" class="btn-submit">View Assessment History</a>
+        </div>
+    </div>
+</div>
+
+<script>
+    function updateSlider(name) {
+        const slider = document.getElementById(name);
+        const display = document.getElementById(name + '_val');
+        display.textContent = slider.value;
+    }
+    
+    document.getElementById('stressForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const form = e.target;
+        const formData = new FormData(form);
+        const data = {};
+        
+        for (let [key, value] of formData.entries()) {
+            data[key] = value;
+        }
+        
+        // Add profile data
+        data.profile_id = document.getElementById('profile_id').value;
+        data.age = document.getElementById('profile_age').value;
+        data.gender = document.getElementById('profile_gender').value;
+        
+        // Get selected mechanisms
+        const mechanisms = [];
+        document.querySelectorAll('.mechanism-item input[type="checkbox"]:checked').forEach(cb => {
+            mechanisms.push(cb.value);
+        });
+        data.current_mechanisms = mechanisms;
+        
+        // Show loading
+        document.querySelector('.loading').classList.add('show');
+        document.getElementById('results').classList.remove('show');
+        document.getElementById('errorMessage').classList.remove('show');
+        
+        try {
+            const response = await fetch('/predict', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            });
+            
+            const result = await response.json();
+            
+            if (response.ok) {
+                displayResults(result);
+            } else {
+                showError(result.error || 'An error occurred');
+            }
+        } catch (error) {
+            showError('Failed to connect to server');
+        } finally {
+            document.querySelector('.loading').classList.remove('show');
+        }
+    });
+    
+    function displayResults(result) {
+        const stressLevel = document.getElementById('stressLevel');
+        stressLevel.textContent = result.prediction;
+        stressLevel.className = 'stress-level stress-' + result.prediction.toLowerCase();
+        
+        // Update probability bars
+        const probs = result.probabilities;
+        document.getElementById('probLow').textContent = (probs.Low * 100).toFixed(1) + '%';
+        document.getElementById('probMed').textContent = (probs.Medium * 100).toFixed(1) + '%';
+        document.getElementById('probHigh').textContent = (probs.High * 100).toFixed(1) + '%';
+        
+        document.getElementById('barLow').style.width = (probs.Low * 100) + '%';
+        document.getElementById('barMed').style.width = (probs.Medium * 100) + '%';
+        document.getElementById('barHigh').style.width = (probs.High * 100) + '%';
+        
+        // Display recommendations
+        const recList = document.getElementById('recommendationsList');
+        recList.innerHTML = '';
+        
+        if (result.recommendations.length > 0) {
+            result.recommendations.forEach(rec => {
+                const recItem = document.createElement('div');
+                recItem.className = 'rec-item';
+                recItem.innerHTML = `
+                    <div class="rec-name">${rec.mechanism}</div>
+                    <div class="rec-success">Success rate: ${(rec.success_rate * 100).toFixed(1)}%</div>
+                `;
+                recList.appendChild(recItem);
+            });
+        } else {
+            recList.innerHTML = '<p>You are already using effective coping mechanisms. Keep up the good work!</p>';
+        }
+        
+        document.getElementById('results').classList.add('show');
+    }
+    
+    function showError(message) {
+        const errorDiv = document.getElementById('errorMessage');
+        errorDiv.textContent = 'Error: ' + message;
+        errorDiv.classList.add('show');
+    }
+</script>
+{% endblock %}
