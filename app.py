@@ -9,7 +9,7 @@ import os
 from models import db, User, Profile, Assessment
 from forms import RegistrationForm, LoginForm, ProfileForm
 
-app = Flask(__name__)
+app = Flask(__name__, instance_path='/tmp')
 import os
 from dotenv import load_dotenv
 
