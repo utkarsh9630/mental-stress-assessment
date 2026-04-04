@@ -1,0 +1,6 @@
+0000000000000000000000000000000000000000 6ff067f53f54b539c0c9980fbc7d21c1351e3ea3 Utkarsh <tripathiutkarsh46@gmail.com> 1774031298 -0700	commit (initial): Initial commit: mental stress assessment
+6ff067f53f54b539c0c9980fbc7d21c1351e3ea3 f100de7c19584350997c3702807cc7cfef0c68dc Utkarsh <tripathiutkarsh46@gmail.com> 1774551105 -0700	commit: Update Flask app instance path for deployment
+f100de7c19584350997c3702807cc7cfef0c68dc 60f65037ddb461e774ff63ecf2dbe42072bb2fbe Utkarsh <tripathiutkarsh46@gmail.com> 1774551131 -0700	rebase (start): checkout origin/main
+60f65037ddb461e774ff63ecf2dbe42072bb2fbe 45604b9bb511f13dd21c8318f8926503325418f3 Utkarsh <tripathiutkarsh46@gmail.com> 1774551131 -0700	rebase (pick): Update Flask app instance path for deployment
+45604b9bb511f13dd21c8318f8926503325418f3 45604b9bb511f13dd21c8318f8926503325418f3 Utkarsh <tripathiutkarsh46@gmail.com> 1774551131 -0700	rebase (finish): returning to refs/heads/main
+45604b9bb511f13dd21c8318f8926503325418f3 232eeccb7cf7f1667234aba6cba1f9066d0a6005 Utkarsh <tripathiutkarsh46@gmail.com> 1774553167 -0700	commit: Update README with latest project documentation.
