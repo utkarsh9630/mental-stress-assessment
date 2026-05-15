@@ -49,6 +49,7 @@ Thumbs.db
 .pytest_cache/
 .coverage
 htmlcov/
+**/gitdir2/
 
 # Data (keep models and necessary data)
 *.csv
